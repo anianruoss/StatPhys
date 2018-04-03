@@ -34,3 +34,5 @@
 # Compiled code
 build
 
+# IPython Checkpoints
+.ipynb_checkpoints
