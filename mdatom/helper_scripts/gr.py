@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
-import re,string
+import re
+import string
 import sys
 
 f = open(sys.argv[1],"r")
@@ -25,5 +26,3 @@ while 1:
         #t = string.split(line)
     if pattern2.search(line) != None:
         break
-
-
