@@ -1,0 +1,22 @@
+# Title
+Ex 5.5
+#                 NumberAtoms                 AtomicMass                     MDType
+                         1000                          1                          1
+#                  BoxSize(x)                 BoxSize(y)                 BoxSize(z)
+                           30                         30                         30
+#               NumberMDSteps                InitialTime                   TimeStep
+                          500                         10                      0.005
+#          InitialTemperature          TargetTemperature    TemperatureCouplingTime
+                            0                     120.27                       0.05
+#                  RandomSeed
+                     10021988
+#            XVInitialization  CoordInitializationSpread              FinalXVOutput
+                            3                          0                          1
+#          NAtomsOnBoxEdge(x)         NAtomsOnBoxEdge(y)         NAtomsOnBoxEdge(z)
+                           10                         10                         10
+#                   EpsilonLJ                    SigmaLJ    InteractionCutoffRadius
+                            1                          1                        2.5
+#    PropertyPrintingInterval    NumberRadialDistrPoints    RadialDistrCutoffRadius
+                          100                        100                        2.5
+#            TrajectoryOutput     TrajectoryOutputFormat   TrajectoryOutputInterval
+                            0                          2                          5
