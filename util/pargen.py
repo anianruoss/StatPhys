@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # generate hideous .inp file from
 # readable configuration file
 
