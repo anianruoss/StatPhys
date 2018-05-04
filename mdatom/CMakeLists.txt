@@ -49,6 +49,8 @@ set (sources
      lib/RandomNumberGenerator.cpp
 )
 
+SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O2 -march=native" )
+
 add_library(mdatomLib ${sources} ${headers})
 set_target_properties(mdatomLib PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_include_directories(mdatomLib PUBLIC lib)
