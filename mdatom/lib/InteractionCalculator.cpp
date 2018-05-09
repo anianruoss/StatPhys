@@ -16,6 +16,8 @@ void InteractionCalculator::initializeValues() {
     sig6 = sig6 * sig6 * sig6;
     c6 = 4. * par.epsilonLJ * sig6;
     c12 = c6 * sig6;
+    r0 = std::pow(2. * sig6, 1/6);
+
     rcutf2 = par.interactionCutoffRadius * par.interactionCutoffRadius;
     for (int m = 0; m < 3; m++)
         inverseBoxLength[m] = 1.0 / par.boxSize[m];
@@ -63,9 +65,10 @@ void InteractionCalculator::applyPeriodicBoundaryConditions(int i, int j, const 
 }
 
 void InteractionCalculator::calculateSquaredDistance() {
-    rij2 = 0;
+    rij = {0.};
     for (int m = 0; m < 3; m++)
-        rij2 += xij[m] * xij[m];
+        rij += xij[m];
+    rij2 = rij * rij;
 }
 
 void InteractionCalculator::calculatePotentialAndForceMagnitude(bool harmonic) {
@@ -73,14 +76,14 @@ void InteractionCalculator::calculatePotentialAndForceMagnitude(bool harmonic) {
     double riji6 = riji2 * riji2 * riji2; // inverse inter-particle distance (6th power)
     double crh = c12 * riji6; // 4 epsilon sigma^12 / r^6
     double crhh = crh - c6; // 4 epsilon (sigma^12 / r^6 - sigma^6) L-J potential work variable
-    eij= crhh * riji6; //  4 epsilon (sigma^12 / r^12 - sigma^6/r^6)
-    dij= 6. * (crh + crhh) * riji6 * riji2;
-	// dij = force / rij
+    eij = crhh * riji6; // 4 epsilon (sigma^12 / r^12 - sigma^6/r^6)
+    dij = 6. * (crh + crhh) * riji6 * riji2; // dij = force / rij
 
 	// Add harmonic contribution
 	if (harmonic){
-		eij += K0_half * riji2;
-		dij += K0 * riji2 * riji2;
+        double diff = rij - r0;
+		eij += K0_half * std::pow(diff, 2);
+		dij += K0 * diff / rij;
 	}
 }
 
@@ -89,7 +92,7 @@ void InteractionCalculator::calculateForceAndVirialContributions(int i, int j, s
     int j3 = 3 * j;
     for (int m = 0; m < 3; m++) {
         // Force increment in direction of inter-particle vector
-        //(note: xij[m]/rij is unit vector in inter-particle direction.)
+        // (note: xij[m]/rij is unit vector in inter-particle direction.)
         double df = xij[m] * dij;
         forces[i3 + m] += df;
         forces[j3 + m] -= df;

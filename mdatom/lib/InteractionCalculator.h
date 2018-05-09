@@ -44,8 +44,10 @@ class InteractionCalculator{
     double sig6;
     double c6;
     double c12;
+    double r0;
 
     double xij[3]; // Inter-particle vector
+    double rij; // Inter-particle distance
     double rij2; // Inter-particle distance squared
     double eij, dij;
 
