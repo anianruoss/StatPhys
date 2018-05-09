@@ -82,7 +82,7 @@ void InteractionCalculator::calculatePotentialAndForceMagnitude(bool harmonic) {
 	// Add harmonic contribution
 	if (harmonic){
         double diff = rij - r0;
-		eij += K0_half * std::pow(diff, 2);
+		eij += K0_half * diff * diff;
 		dij += K0 * diff / rij;
 	}
 }
