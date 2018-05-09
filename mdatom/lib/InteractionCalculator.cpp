@@ -79,8 +79,12 @@ void InteractionCalculator::calculatePotentialAndForceMagnitude(bool harmonic) {
 
 	// Add harmonic contribution
 	if (harmonic){
-		eij += K0_half * riji2;
-		dij += K0 * riji2 * riji2;
+		// it is acceptable to use sqrt here, since this is only done n times
+		drij = sqrt(rij2) - R0;
+		drij2 = drij * drij;
+
+		eij += K0_half * drij2;
+		dij += - K0 * drij2 * drij;
 	}
 }
 
