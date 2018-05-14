@@ -27,7 +27,7 @@ class InteractionCalculator{
     void resetVariablesToZero(std::vector<double>& forces);
     void applyPeriodicBoundaryConditions(int i, int j, const std::vector<double>& positions);
     void calculateSquaredDistance();
-    void calculatePotentialAndForceMagnitude(bool harmonic);
+    void calculatePotentialAndForceMagnitude();
     void calculateForceAndVirialContributions(int i, int j, std::vector<double>& forces);
     void calculateInteraction(int i, int j, const std::vector<double>& positions, std::vector<double>& forces);
 
@@ -48,12 +48,10 @@ class InteractionCalculator{
     double xij[3]; // Inter-particle vector
     double rij2; // Inter-particle distance squared
     double eij, dij;
-	double drij; // difference rij - R0, only for harmonically interacting particles
-	double drij2; // drij squared
 
-	static constexpr double K0 = 2e5;
-	static constexpr double K0_half = K0 / 2;
 	static constexpr double R0 = 1;
+	static constexpr double c_tol_rel = 1e-5; // relative constraint tolerance
+	static constexpr double c_tol = c_tol_rel * R0; // absolute constraint tolerance
 };
 
 #endif // INTERACTIONCALCULATOR_H

@@ -97,12 +97,16 @@ void MDRun::performStep(std::vector<double>& positions, std::vector<double>& vel
         scal = std::sqrt(1 + dtt * (ekin0 / ekg - 1));
     }
 
+
     /* perform leap-frog integration step,
      * calculate kinetic energy at time t-dt/2 and at time t,
      * and calculate pressure
      */
     double oldKineticEnergy = 0.;
     double newKineticEnergy = 0.;
+
+	/* Store current positions for enforcing constraints */
+	std::vector<double> prev_pos(positions);
     for (int j3 = 0; j3 < nat3; j3++) {
         double oldVelocity = velocities[j3];
         double newVelocity = (oldVelocity + forces[j3] * dtm) * scal;
@@ -110,7 +114,10 @@ void MDRun::performStep(std::vector<double>& positions, std::vector<double>& vel
         newKineticEnergy += (oldVelocity + newVelocity) * (oldVelocity + newVelocity);
         velocities[j3] = newVelocity;
         positions[j3] += newVelocity * par.timeStep;
-    }
+	}
+	/* Enforce constraints
+	 */
+
     oldKineticEnergy *= (par.atomicMass / 2.);
     newKineticEnergy *= (par.atomicMass / 8.);
     properties[1] = newKineticEnergy;

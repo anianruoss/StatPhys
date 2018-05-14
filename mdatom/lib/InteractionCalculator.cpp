@@ -68,7 +68,7 @@ void InteractionCalculator::calculateSquaredDistance() {
         rij2 += xij[m] * xij[m];
 }
 
-void InteractionCalculator::calculatePotentialAndForceMagnitude(bool harmonic) {
+void InteractionCalculator::calculatePotentialAndForceMagnitude() {
     double riji2 = 1.0 / rij2; // inverse inter-particle distance squared
     double riji6 = riji2 * riji2 * riji2; // inverse inter-particle distance (6th power)
     double crh = c12 * riji6; // 4 epsilon sigma^12 / r^6
@@ -77,15 +77,6 @@ void InteractionCalculator::calculatePotentialAndForceMagnitude(bool harmonic) {
     dij= 6. * (crh + crhh) * riji6 * riji2;
 	// dij = force / rij
 
-	// Add harmonic contribution
-	if (harmonic){
-		// it is acceptable to use sqrt here, since this is only done n times
-		drij = sqrt(rij2) - R0;
-		drij2 = drij * drij;
-
-		eij += K0_half * drij2;
-		dij += - K0 * drij2 * drij;
-	}
 }
 
 void InteractionCalculator::calculateForceAndVirialContributions(int i, int j, std::vector<double>& forces) {
