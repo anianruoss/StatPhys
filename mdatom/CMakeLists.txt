@@ -55,5 +55,7 @@ add_library(mdatomLib ${sources} ${headers})
 set_target_properties(mdatomLib PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_include_directories(mdatomLib PUBLIC lib)
 
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0")
+
 add_executable(mdatom main.cpp)
 target_link_libraries(mdatom mdatomLib)

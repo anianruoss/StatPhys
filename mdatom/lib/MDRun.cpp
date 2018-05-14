@@ -133,14 +133,14 @@ void MDRun::performStep(std::vector<double>& positions, std::vector<double>& vel
 	 */
 
 	bool constrained = false;  // true iff all constraints are satisifed (i.e. within tolerance)
-	for (int shake_it = 0; shake_it < max_shake_it && not constrained; shake_it++){
+	for (int shake_it = 0; shake_it < max_shake_it and not constrained; shake_it++){
 		// per shake iteration
 		std::vector<double> new_positions(positions.size());
 		constrained = true;
 		for (int atom = 0; atom < par.numberAtoms; atom ++){
 			double f_c[3] = {0, 0, 0};
 			// Compute d, d'
-			for (int neighbor: {-1, 1}){
+			for (int neighbor: {atom - 1, atom + 1}){
 				/*
 				 * // Wrap around instead of continue
 				 * if (neighbor < 0)
