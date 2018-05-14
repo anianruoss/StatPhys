@@ -46,7 +46,7 @@ void InteractionCalculator::calculateInteraction(int i, int j, const std::vector
     applyPeriodicBoundaryConditions(i, j, positions);
     calculateSquaredDistance();
     if (rij2 < rcutf2) {
-        calculatePotentialAndForceMagnitude(j-i == 1);
+        calculatePotentialAndForceMagnitude();
         potentialEnergy += eij;
         calculateForceAndVirialContributions(i, j, forces);
     }
