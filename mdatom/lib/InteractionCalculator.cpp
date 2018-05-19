@@ -47,7 +47,7 @@ void InteractionCalculator::calculateInteraction(int i, int j, const std::vector
     applyPeriodicBoundaryConditions(i, j, positions);
     calculateSquaredDistance();
     if (rij2 < rcutf2) {
-        calculatePotentialAndForceMagnitude(j-i == 1);
+        calculatePotentialAndForceMagnitude((j-i) == 1);
         potentialEnergy += eij;
         calculateForceAndVirialContributions(i, j, forces);
     }
@@ -64,26 +64,25 @@ void InteractionCalculator::applyPeriodicBoundaryConditions(int i, int j, const 
 }
 
 void InteractionCalculator::calculateSquaredDistance() {
-    rij = {0.};
+    rij2 = 0;
     for (int m = 0; m < 3; m++)
-        rij += xij[m];
-    rij2 = rij * rij;
+        rij2 += xij[m] * xij[m];
+    rij = std::sqrt(rij2);
 }
 
 void InteractionCalculator::calculatePotentialAndForceMagnitude(bool harmonic) {
-    double riji2 = 1.0 / rij2; // inverse inter-particle distance squared
-    double riji6 = riji2 * riji2 * riji2; // inverse inter-particle distance (6th power)
-    double crh = c12 * riji6; // 4 epsilon sigma^12 / r^6
-    double crhh = crh - c6; // 4 epsilon (sigma^12 / r^6 - sigma^6) L-J potential work variable
-    eij = crhh * riji6; // 4 epsilon (sigma^12 / r^12 - sigma^6/r^6)
-    dij = 6. * (crh + crhh) * riji6 * riji2; // dij = force / rij
-
-	// Add harmonic contribution
-	if (harmonic){
+    if (harmonic) {
         double diff = rij - r0;
-		eij += K0_half * diff * diff;
-		dij += K0 * diff / rij;
-	}
+        eij += K0_half * diff * diff;
+        dij += K0 * diff / rij;
+    } else {
+        double riji2 = 1.0 / rij2; // inverse inter-particle distance squared
+        double riji6 = riji2 * riji2 * riji2; // inverse inter-particle distance (6th power)
+        double crh = c12 * riji6; // 4 epsilon sigma^12 / r^6
+        double crhh = crh - c6; // 4 epsilon (sigma^12 / r^6 - sigma^6) L-J potential work variable
+        eij = crhh * riji6; // 4 epsilon (sigma^12 / r^12 - sigma^6/r^6)
+        dij = 6. * (crh + crhh) * riji6 * riji2; // dij = force / rij
+    }
 }
 
 void InteractionCalculator::calculateForceAndVirialContributions(int i, int j, std::vector<double>& forces) {
