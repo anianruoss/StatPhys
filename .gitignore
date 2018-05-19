@@ -36,3 +36,7 @@ build
 
 # IPython Checkpoints
 .ipynb_checkpoints
+
+# Virtualenv
+virtualenv
+
