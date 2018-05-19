@@ -100,7 +100,7 @@ void TrajectoryFileWriter::writeOutTrajectoryStepInBinaryForm(const std::vector<
 }
 
 void TrajectoryFileWriter::writeOutTrajectoryStepInAsciiForm(const std::vector<double>& positions) {
-	const string atom = "C";
+	const string atom = "Ar";
     ofstream fileFW;
     fileFW.open(trajectoryCoordinatesFilename, ios::out | ios::app);
     if (fileFW.bad()) {
