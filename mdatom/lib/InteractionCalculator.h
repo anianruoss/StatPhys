@@ -48,10 +48,6 @@ class InteractionCalculator{
     double xij[3]; // Inter-particle vector
     double rij2; // Inter-particle distance squared
     double eij, dij;
-
-	static constexpr double R0 = 1;
-	static constexpr double c_tol_rel = 1e-5; // relative constraint tolerance
-	static constexpr double c_tol = c_tol_rel * R0; // absolute constraint tolerance
 };
 
 #endif // INTERACTIONCALCULATOR_H
