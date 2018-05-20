@@ -132,7 +132,51 @@ void MDRun::performStep(std::vector<double>& positions, std::vector<double>& vel
 	 * 3. Compute $\Delta r_i$
 	 */
 
+    bool constrained = false;
+
+    while (!constrained) {
+        std::vector<double> delta_pos(positions.size(), 0.);
+        constrained = true;
+
+        for (int atom = 0; atom < par.numberAtoms-1; ++atom) {
+            double d_start[3], d_end[3], f_c[3];
+            double ds, de, dotP;
+            ds = de = dotP = 0.;
+
+            for (int i = 0; i < 3; ++i) {
+                d_start[i] = prev_pos[(atom+1)*3 + i] - prev_pos[atom*3 + i];
+                d_end[i] = positions[(atom+1)*3 + i] - positions[atom*3 + i];
+
+                ds += d_start[i] * d_start[i];
+                de += d_end[i] * d_end[i];
+
+                dotP += d_start[i] * d_end[i];
+            }
+
+            ds = std::sqrt(ds);
+            de = std::sqrt(de);
+
+            if ((std::abs(ds - de) / ds) >= shake_rel_tol)
+                constrained = false;
+
+            for (int i = 0; i < 3; ++i)
+                f_c[i] = d_start[i] * mu_d_2_tsq * (ds*ds - de*de) / dotP;
+
+            for (int i = 0; i < 3; ++i) {
+                delta_pos[atom*3 + i] += Dt2_d_m * f_c[i];
+                delta_pos[(atom+1)*3 + i] += Dt2_d_m * f_c[i];
+            }
+        }
+
+        for (int j3 = 0; j3 < nat3; ++j3)
+            positions[j3] = prev_pos[j3] + delta_pos[j3];
+    }
+
+    /*
+
+    int max_shake_it = 20;
 	bool constrained = false;  // true iff all constraints are satisifed (i.e. within tolerance)
+
 	for (int shake_it = 0; shake_it < max_shake_it and not constrained; shake_it++){
 		// per shake iteration
 		std::vector<double> new_positions(positions.size());
@@ -141,13 +185,11 @@ void MDRun::performStep(std::vector<double>& positions, std::vector<double>& vel
 			double f_c[3] = {0, 0, 0};
 			// Compute d, d'
 			for (int neighbor: {atom - 1, atom + 1}){
-				/*
 				 * // Wrap around instead of continue
 				 * if (neighbor < 0)
 				 * 	neighbor += par.numberAtoms;
 				 * else if (neighbor >= par.numberAtoms)
 				 * 	neighbor -= par.numberAtoms;
-				*/
 				// Don't wrap around
 				if (neighbor < 0 or neighbor >= par.numberAtoms)
 					continue;
@@ -157,6 +199,7 @@ void MDRun::performStep(std::vector<double>& positions, std::vector<double>& vel
 					d_a[i] = positions[neighbor * 3 + i] - positions[atom * 3 + i];
 					d[i] = prev_pos[neighbor * 3 + i] - prev_pos[atom * 3 + i];
 				}
+
 				double diff = 0, d_abs = 0, error;
 				for(int i = 0; i < 3; i++){
 					diff += std::pow(d[i] - d_a[i], 2);
@@ -165,7 +208,6 @@ void MDRun::performStep(std::vector<double>& positions, std::vector<double>& vel
 				error = std::sqrt(diff)/std::sqrt(d_abs);
 				if (error > shake_rel_tol)
 					constrained = false;
-				std::cout << "Error: " << error;
 
 				// Compute squares of d', d and d * d'
 				double d_a_2 = 0, d_2 = 0, d_d_a = 0;
@@ -187,11 +229,13 @@ void MDRun::performStep(std::vector<double>& positions, std::vector<double>& vel
 			// Update new position of this atom
 			for (int j = 0; j < 3; j++)
 				new_positions[atom * 3 + j] = prev_pos[atom * 3 + j] + r_i[j];
-		}
+        }
+
 		positions = new_positions;
-		if (shake_it + 1 == max_shake_it)
+        if (shake_it + 1 == max_shake_it)
 			std::cerr << "Maximum number of iterations reached!" << std::endl;
 	}
+    */
 
     oldKineticEnergy *= (par.atomicMass / 2.);
     newKineticEnergy *= (par.atomicMass / 8.);

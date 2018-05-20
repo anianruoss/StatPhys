@@ -55,12 +55,9 @@ class MDRun {
     double ekg;
 
 	// $\frac{\mu}{2 \Delta t^2}$ is a constant factor in this simulation
-	const double mu_d_2_tsq = par.atomicMass / 4 / std::pow(par.timeStep, 2);
+	const double mu_d_2_tsq = par.atomicMass / (4 * std::pow(par.timeStep, 2));
 	const double Dt2_d_m = std::pow(par.timeStep, 2) / par.atomicMass;
-
 	const double shake_rel_tol = 1e-4;
-
-	const unsigned int max_shake_it = 20;
 };
 
 #endif // MDRUN_H
