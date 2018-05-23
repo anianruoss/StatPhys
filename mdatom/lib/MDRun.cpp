@@ -134,7 +134,9 @@ void MDRun::performStep(std::vector<double>& positions, std::vector<double>& vel
 
     bool constrained = false;
 
+	int shake_it = 0;
     while (!constrained) {
+		std::cout << "\nshake_it :" << shake_it << " ";
         std::vector<double> delta_pos(positions.size(), 0.);
         constrained = true;
 
@@ -156,20 +158,32 @@ void MDRun::performStep(std::vector<double>& positions, std::vector<double>& vel
             ds = std::sqrt(ds);
             de = std::sqrt(de);
 
-            if ((std::abs(ds - de) / ds) >= shake_rel_tol)
+			double error = (std::abs(ds - de) / ds);
+            if (error >= shake_rel_tol)
                 constrained = false;
+
+			// Note that we are actually iterating over constraints, not atoms
+			// Note that the output happens before computing constraint forces
+			std::cout << " atom " << atom << " err " << error << '\t';
 
             for (int i = 0; i < 3; ++i)
                 f_c[i] = d_start[i] * mu_d_2_tsq * (ds*ds - de*de) / dotP;
 
             for (int i = 0; i < 3; ++i) {
-                delta_pos[atom*3 + i] += Dt2_d_m * f_c[i];
+                // delta_pos[atom*3 + i] += Dt2_d_m * f_c[i];
+                delta_pos[atom*3 + i] -= Dt2_d_m * f_c[i];
                 delta_pos[(atom+1)*3 + i] += Dt2_d_m * f_c[i];
+                // delta_pos[(atom+1)*3 + i] -= Dt2_d_m * f_c[i];
             }
         }
+		shake_it ++;
+		if (shake_it > 200){
+			std::cerr << "no convergence" << std::endl;
+			break;
+		}
 
         for (int j3 = 0; j3 < nat3; ++j3)
-            positions[j3] = prev_pos[j3] + delta_pos[j3];
+            positions[j3] = positions[j3] + delta_pos[j3];
     }
 
     /*
