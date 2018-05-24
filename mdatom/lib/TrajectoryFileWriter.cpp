@@ -32,6 +32,7 @@ void TrajectoryFileWriter::writeBeforeRun() {
         if (fout1.bad()) {
             throw std::runtime_error("can't open " + trajectoryCoordinatesFilename);
         }
+
         return;
         fout1 << par.title << endl;
     }
@@ -100,18 +101,34 @@ void TrajectoryFileWriter::writeOutTrajectoryStepInBinaryForm(const std::vector<
 }
 
 void TrajectoryFileWriter::writeOutTrajectoryStepInAsciiForm(const std::vector<double>& positions) {
+	// This function writes Molfiles as defined here:
+	// https://sourceforge.net/p/jmol/code/HEAD/tree/trunk/Jmol-datafiles/mol/ctfile.pdf
+	
     const string atom = "Ar";
     ofstream fileFW;
     fileFW.open(trajectoryCoordinatesFilename, ios::out | ios::app);
     if (fileFW.bad()) {
         throw runtime_error("I/O ERROR: cannot write to file: " + trajectoryCoordinatesFilename);
     }
-    fileFW << par.numberAtoms << endl << par.title << std::endl;
+	// Header block
+	fileFW << par.title << endl << endl << endl;
+	// Bonds are between subsequent atoms
+	// Counts line
+	int N = par.numberAtoms;
+	fileFW << setw(3) << N << setw(3) << N-1 << setw(3) << 0 << setw(3) << 0
+		<< setw(3) << 0 << std::endl;
+	fileFW << fixed << setprecision(4);
+	// Atom block
     for (int i = 0; i < par.numberAtoms; i++){
-        fileFW << atom << '\t';
         for (int c = 0; c < 3; c++){
-            fileFW << positions[i*3+c] << '\t';
+			fileFW << setw(10) << positions[i*3+c];
         }
+		fileFW << setw(3) << atom;
         fileFW << endl;
     }
+	// Bond block
+	for (int i = 1; i < N; i++){
+		fileFW << setw(3) << i << setw(3) << i + 1 << setw(3) << 1 << endl;
+	}
+	fileFW << "M  END" << endl;
 }

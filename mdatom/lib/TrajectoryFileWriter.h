@@ -21,6 +21,7 @@ class TrajectoryFileWriter {
     void writeFinalCoordinatesInBinaryForm(const std::vector<double>& positions, const std::vector<double>& velocities);
     void writeFinalCoordinatesInAsciiForm(const std::vector<double>& positions, const std::vector<double>& velocities);
     void writeOutTrajectoryStepInBinaryForm(const std::vector<double>& positions);
+	// Ascii form = Molfile
     void writeOutTrajectoryStepInAsciiForm(const std::vector<double>& positions);
 
     const MDParameters& par;
