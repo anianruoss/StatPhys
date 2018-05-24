@@ -38,6 +38,22 @@ void TrajectoryFileWriter::writeBeforeRun() {
     }
 }
 
+void TrajectoryFileWriter::writeAfterRun() {
+    ofstream fileFW;
+    fileFW.open(trajectoryCoordinatesFilename, ios::out | ios::app);
+    if (fileFW.bad()) {
+        throw runtime_error("I/O ERROR: cannot write to file: " + trajectoryCoordinatesFilename);
+    }
+	// Bonds
+	int N = par.numberAtoms;
+	for (int step = 0; step < model; step++){
+		for (int atom = 1; atom < N; atom++){
+			fileFW << "CONECT" << setw(5) << step*N + atom << setw(5) << step*N + atom + 1 << endl;
+			fileFW << "CONECT" << setw(5) << step*N + atom + 1 << setw(5) << step*N + atom << endl;
+		}
+	}
+}
+
 void TrajectoryFileWriter::writeFinalCoordinates(const std::vector<double>& positions,
                                                  const std::vector<double>& velocities) {
     if (par.finalXVOutput == FinalCoordinateFileFormat::ascii) {
@@ -101,34 +117,33 @@ void TrajectoryFileWriter::writeOutTrajectoryStepInBinaryForm(const std::vector<
 }
 
 void TrajectoryFileWriter::writeOutTrajectoryStepInAsciiForm(const std::vector<double>& positions) {
-	// This function writes Molfiles as defined here:
-	// https://sourceforge.net/p/jmol/code/HEAD/tree/trunk/Jmol-datafiles/mol/ctfile.pdf
+	// This function writes PDB Files as defined here:
+	// It writes the minimum amount of information necessary
 	
-    const string atom = "Ar";
+    const string atom = "AR";
     ofstream fileFW;
     fileFW.open(trajectoryCoordinatesFilename, ios::out | ios::app);
     if (fileFW.bad()) {
         throw runtime_error("I/O ERROR: cannot write to file: " + trajectoryCoordinatesFilename);
     }
 	// Header block
-	fileFW << par.title << endl << endl << endl;
 	// Bonds are between subsequent atoms
 	// Counts line
 	int N = par.numberAtoms;
-	fileFW << setw(3) << N << setw(3) << N-1 << setw(3) << 0 << setw(3) << 0
-		<< setw(3) << 0 << std::endl;
-	fileFW << fixed << setprecision(4);
-	// Atom block
+	fileFW << "MODEL" << setw(5) << ' ' << model+1 << endl;
     for (int i = 0; i < par.numberAtoms; i++){
+		fileFW << fixed << setprecision(3);
+		fileFW << "HETATM" << setw(5) << model * N + i + 1<< " " << setw(4) << i + 1<< " UNK";
+		fileFW << setw(6) << 1 << setw(4) << " ";
         for (int c = 0; c < 3; c++){
-			fileFW << setw(10) << positions[i*3+c];
+			// angström used
+			// fileFW << setw(8) << 10 * positions[i*3+c];
+			// perhaps not
+			fileFW << setw(8) << positions[i*3+c];
         }
-		fileFW << setw(3) << atom;
-        fileFW << endl;
+		fileFW << setw(6) << "  1.00" << setw(6) << "  0.00" << setw(10) << ' ';
+		fileFW << right << setw(2) << atom << "  " << endl;
     }
-	// Bond block
-	for (int i = 1; i < N; i++){
-		fileFW << setw(3) << i << setw(3) << i + 1 << setw(3) << 1 << endl;
-	}
-	fileFW << "M  END" << endl;
+	fileFW << "ENDMDL" << endl;
+	model ++;
 }

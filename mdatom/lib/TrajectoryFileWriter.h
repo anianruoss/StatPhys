@@ -14,6 +14,7 @@ class TrajectoryFileWriter {
                          std::string finalCoordFilename,
                          std::string trajFilename);
     void writeBeforeRun();
+    void writeAfterRun();
     void writeFinalCoordinates(const std::vector<double>& positions, const std::vector<double>& velocities);
     void writeOutTrajectoryStep(const std::vector<double>& positions);
 
@@ -21,12 +22,13 @@ class TrajectoryFileWriter {
     void writeFinalCoordinatesInBinaryForm(const std::vector<double>& positions, const std::vector<double>& velocities);
     void writeFinalCoordinatesInAsciiForm(const std::vector<double>& positions, const std::vector<double>& velocities);
     void writeOutTrajectoryStepInBinaryForm(const std::vector<double>& positions);
-	// Ascii form = Molfile
+	// Ascii form = PDB File
     void writeOutTrajectoryStepInAsciiForm(const std::vector<double>& positions);
 
     const MDParameters& par;
     const std::string finalCoordinatesFilename;
     const std::string trajectoryCoordinatesFilename;
+	int model = 0; // n-th model for pdb
 };
 
 #endif // TRAJECTORYFILEWRITER_H
