@@ -16,7 +16,6 @@ void InteractionCalculator::initializeValues() {
     sig6 = sig6 * sig6 * sig6;
     c6 = 4. * par.epsilonLJ * sig6;
     c12 = c6 * sig6;
-
     rcutf2 = par.interactionCutoffRadius * par.interactionCutoffRadius;
     for (int m = 0; m < 3; m++)
         inverseBoxLength[m] = 1.0 / par.boxSize[m];

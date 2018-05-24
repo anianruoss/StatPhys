@@ -3,14 +3,13 @@
 from sys import argv
 import re
 
-atom = 'C'
+atom = 'Ar'
 
 coords = re.compile(
         '^ +[0-9]+ +([0-9Ee\\+-.]+) +([0-9Ee\\+-.]+) +([0-9Ee\\+-.]+)')
 
 
 def parser(line):
-    c = print(coords.findall(line))
     c = coords.findall(line)[0]
     return ' '.join((atom, *c)) + '\n'
 

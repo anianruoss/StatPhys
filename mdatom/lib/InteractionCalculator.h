@@ -44,17 +44,15 @@ class InteractionCalculator{
     double sig6;
     double c6;
     double c12;
-    static constexpr double r0 = 1.;
 
     double xij[3]; // Inter-particle vector
     double rij; // Inter-particle distance
     double rij2; // Inter-particle distance squared
     double eij, dij;
-	double drij; // difference rij - R0, only for harmonically interacting particles
-	double drij2; // drij squared
 
-	static constexpr double K0 = 1.;
-	static constexpr double K0_half = K0 / 2.;
+    static constexpr double r0 = 1.;
+    static constexpr double K0 = 1.;
+    static constexpr double K0_half = K0 / 2.;
 };
 
 #endif // INTERACTIONCALCULATOR_H
