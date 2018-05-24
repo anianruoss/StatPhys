@@ -1,11 +1,8 @@
-#!/usr/bin/env python3
 # convert coords.final file to xyz file
-
 
 from sys import argv
 import re
 
-# import numpy as np
 atom = 'Ar'
 
 coords = re.compile(
@@ -28,11 +25,11 @@ with open(argv[1]) as f:
     lines = f.readlines()
 
 
-out_lines = list(
-        map(parser, lines[2:]))
+out_lines = list(map(parser, lines[2:]))
 
 out_lines.insert(0, lines[0])
 out_lines.insert(0, str(len(out_lines)-1)+'\n')
 
 with open(out, 'w') as of:
     of.writelines(out_lines)
+

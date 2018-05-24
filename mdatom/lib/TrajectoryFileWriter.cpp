@@ -17,6 +17,14 @@ TrajectoryFileWriter::TrajectoryFileWriter(const MDParameters &parameters,
     trajectoryCoordinatesFilename(std::move(trajFilename)) {
 }
 
+/* xyz spec:
+ * per step:
+ * 1 line n_atoms
+ * 1 line comment
+ * per atom (1 per line):
+ * Symbol, x, y, z: separated by whitespace
+ */
+
 void TrajectoryFileWriter::writeBeforeRun() {
     ofstream fout1; // trajectory output
     if (par.trajectoryOutput) {
@@ -24,6 +32,7 @@ void TrajectoryFileWriter::writeBeforeRun() {
         if (fout1.bad()) {
             throw std::runtime_error("can't open " + trajectoryCoordinatesFilename);
         }
+        return;
         fout1 << par.title << endl;
     }
 }
@@ -91,15 +100,17 @@ void TrajectoryFileWriter::writeOutTrajectoryStepInBinaryForm(const std::vector<
 }
 
 void TrajectoryFileWriter::writeOutTrajectoryStepInAsciiForm(const std::vector<double>& positions) {
+    const string atom = "Ar";
     ofstream fileFW;
     fileFW.open(trajectoryCoordinatesFilename, ios::out | ios::app);
     if (fileFW.bad()) {
         throw runtime_error("I/O ERROR: cannot write to file: " + trajectoryCoordinatesFilename);
     }
-    int ntot = 3 * par.numberAtoms;
-    for (int i = 0; i < ntot; i += 10) {
-        for (int j = i; (j < i + 10 && j < ntot); j++) {
-            fileFW << setw(10) << positions[j];
+    fileFW << par.numberAtoms << endl << par.title << std::endl;
+    for (int i = 0; i < par.numberAtoms; i++){
+        fileFW << atom << '\t';
+        for (int c = 0; c < 3; c++){
+            fileFW << positions[i*3+c] << '\t';
         }
         fileFW << endl;
     }

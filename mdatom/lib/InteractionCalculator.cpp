@@ -46,7 +46,11 @@ void InteractionCalculator::calculateInteraction(int i, int j, const std::vector
     applyPeriodicBoundaryConditions(i, j, positions);
     calculateSquaredDistance();
     if (rij2 < rcutf2) {
+#ifdef HARMONIC
+        calculatePotentialAndForceMagnitude((j-i) == 1);
+#else
         calculatePotentialAndForceMagnitude();
+#endif
         potentialEnergy += eij;
         calculateForceAndVirialContributions(i, j, forces);
     }
@@ -66,23 +70,41 @@ void InteractionCalculator::calculateSquaredDistance() {
     rij2 = 0;
     for (int m = 0; m < 3; m++)
         rij2 += xij[m] * xij[m];
+    rij = std::sqrt(rij2);
 }
 
-void InteractionCalculator::calculatePotentialAndForceMagnitude() {
-    double riji2 = 1.0 / rij2; // inverse inter-particle distance squared
-    double riji6 = riji2 * riji2 * riji2; // inverse inter-particle distance (6th power)
-    double crh = c12 * riji6;
-    double crhh = crh - c6; //  L-J potential work variable
-    eij= crhh * riji6;
-    dij= 6. * (crh + crhh) * riji6 * riji2;
+#ifdef HARMONIC
+void InteractionCalculator::calculatePotentialAndForceMagnitude(bool harmonic) {
+    if (harmonic) {
+        double diff = rij - r0;
+        eij = K0_half * diff * diff;
+        dij = - K0 * diff / rij;
+    } else {
+        double riji2 = 1.0 / rij2; // inverse inter-particle distance squared
+        double riji6 = riji2 * riji2 * riji2; // inverse inter-particle distance (6th power)
+        double crh = c12 * riji6; // 4 epsilon sigma^12 / r^6
+        double crhh = crh - c6; // 4 epsilon (sigma^12 / r^6 - sigma^6) L-J potential work variable
+        eij = crhh * riji6; // 4 epsilon (sigma^12 / r^12 - sigma^6/r^6)
+        dij = 6. * (crh + crhh) * riji6 * riji2; // dij = force / rij
+    }
 }
+#else
+void InteractionCalculator::calculatePotentialAndForceMagnitude() {
+        double riji2 = 1.0 / rij2; // inverse inter-particle distance squared
+        double riji6 = riji2 * riji2 * riji2; // inverse inter-particle distance (6th power)
+        double crh = c12 * riji6; // 4 epsilon sigma^12 / r^6
+        double crhh = crh - c6; // 4 epsilon (sigma^12 / r^6 - sigma^6) L-J potential work variable
+        eij = crhh * riji6; // 4 epsilon (sigma^12 / r^12 - sigma^6/r^6)
+        dij = 6. * (crh + crhh) * riji6 * riji2; // dij = force / rij
+}
+#endif
 
 void InteractionCalculator::calculateForceAndVirialContributions(int i, int j, std::vector<double>& forces) {
     int i3 = 3 * i;
     int j3 = 3 * j;
     for (int m = 0; m < 3; m++) {
         // Force increment in direction of inter-particle vector
-        //(note: xij[m]/rij is unit vector in inter-particle direction.)
+        // (note: xij[m]/rij is unit vector in inter-particle direction.)
         double df = xij[m] * dij;
         forces[i3 + m] += df;
         forces[j3 + m] -= df;
