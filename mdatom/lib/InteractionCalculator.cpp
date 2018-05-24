@@ -1,6 +1,5 @@
 #include "InteractionCalculator.h"
 #include <cmath>
-#include <iostream>
 
 inline int nearestInteger(double x) {
     return x > 0 ? static_cast<int>(x + 0.5) : static_cast<int>(x - 0.5);
@@ -30,7 +29,6 @@ void InteractionCalculator::calculate(const std::vector<double>& positions, std:
             calculateInteraction(i, j, positions, forces);
         }
     }
-	std::cout << std::endl;
     virial /= 2.;
 }
 
@@ -71,8 +69,8 @@ void InteractionCalculator::calculateSquaredDistance() {
     rij = std::sqrt(rij2);
 }
 
-void InteractionCalculator::calculatePotentialAndForceMagnitude(bool harmonic) { 
-	if (harmonic) {
+void InteractionCalculator::calculatePotentialAndForceMagnitude(bool harmonic) {
+    if (harmonic) {
 		std::cout << rij << " ";
         double diff = rij - r0;
         eij = K0_half * diff * diff;
@@ -94,8 +92,8 @@ void InteractionCalculator::calculateForceAndVirialContributions(int i, int j, s
         // Force increment in direction of inter-particle vector
         // (note: xij[m]/rij is unit vector in inter-particle direction.)
         double df = xij[m] * dij;
-		forces[i3 + m] += df;
-		forces[j3 + m] -= df;
+        forces[i3 + m] += df;
+        forces[j3 + m] -= df;
         virial -= xij[m] * df;
     }
 }
