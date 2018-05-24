@@ -46,7 +46,11 @@ void InteractionCalculator::calculateInteraction(int i, int j, const std::vector
     applyPeriodicBoundaryConditions(i, j, positions);
     calculateSquaredDistance();
     if (rij2 < rcutf2) {
+#ifdef HARMONIC
         calculatePotentialAndForceMagnitude((j-i) == 1);
+#else
+        calculatePotentialAndForceMagnitude();
+#endif
         potentialEnergy += eij;
         calculateForceAndVirialContributions(i, j, forces);
     }
@@ -69,9 +73,9 @@ void InteractionCalculator::calculateSquaredDistance() {
     rij = std::sqrt(rij2);
 }
 
+#ifdef HARMONIC
 void InteractionCalculator::calculatePotentialAndForceMagnitude(bool harmonic) {
     if (harmonic) {
-		std::cout << rij << " ";
         double diff = rij - r0;
         eij = K0_half * diff * diff;
         dij = - K0 * diff / rij;
@@ -84,6 +88,16 @@ void InteractionCalculator::calculatePotentialAndForceMagnitude(bool harmonic) {
         dij = 6. * (crh + crhh) * riji6 * riji2; // dij = force / rij
     }
 }
+#else
+void InteractionCalculator::calculatePotentialAndForceMagnitude() {
+        double riji2 = 1.0 / rij2; // inverse inter-particle distance squared
+        double riji6 = riji2 * riji2 * riji2; // inverse inter-particle distance (6th power)
+        double crh = c12 * riji6; // 4 epsilon sigma^12 / r^6
+        double crhh = crh - c6; // 4 epsilon (sigma^12 / r^6 - sigma^6) L-J potential work variable
+        eij = crhh * riji6; // 4 epsilon (sigma^12 / r^12 - sigma^6/r^6)
+        dij = 6. * (crh + crhh) * riji6 * riji2; // dij = force / rij
+}
+#endif
 
 void InteractionCalculator::calculateForceAndVirialContributions(int i, int j, std::vector<double>& forces) {
     int i3 = 3 * i;

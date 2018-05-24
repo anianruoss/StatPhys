@@ -27,7 +27,11 @@ class InteractionCalculator{
     void resetVariablesToZero(std::vector<double>& forces);
     void applyPeriodicBoundaryConditions(int i, int j, const std::vector<double>& positions);
     void calculateSquaredDistance();
+#ifdef HARMONIC
     void calculatePotentialAndForceMagnitude(bool harmonic);
+#else
+    void calculatePotentialAndForceMagnitude();
+#endif
     void calculateForceAndVirialContributions(int i, int j, std::vector<double>& forces);
     void calculateInteraction(int i, int j, const std::vector<double>& positions, std::vector<double>& forces);
 
