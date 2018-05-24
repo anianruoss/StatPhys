@@ -2,7 +2,6 @@ cmake_minimum_required (VERSION 3.1)
 
 project (MDAtom)
 
-# Activate c++11 flag
 set (CMAKE_CXX_STANDARD 17)
 
 # set default build type to Release
@@ -49,7 +48,7 @@ set (sources
      lib/RandomNumberGenerator.cpp
 )
 
-SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O2 -march=native" )
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -march=native")
 
 add_library(mdatomLib ${sources} ${headers})
 set_target_properties(mdatomLib PROPERTIES POSITION_INDEPENDENT_CODE ON)
@@ -59,3 +58,13 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0")
 
 add_executable(mdatom main.cpp)
 target_link_libraries(mdatom mdatomLib)
+
+# harmonic
+add_library(mdatomLibHarmonic ${sources} ${headers})
+set_target_properties(mdatomLibHarmonic PROPERTIES POSITION_INDEPENDENT_CODE ON)
+target_include_directories(mdatomLibHarmonic PUBLIC lib)
+target_compile_definitions(mdatomLibHarmonic PUBLIC HARMONIC)
+
+add_executable(mdatomHarmonic main.cpp)
+target_link_libraries(mdatomHarmonic mdatomLibHarmonic)
+

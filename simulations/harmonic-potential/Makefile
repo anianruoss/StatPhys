@@ -1,4 +1,5 @@
 SOURCES:= ../../mdatom
+LIB := ${SOURCES}/lib
 BUILD:= ${SOURCES}/build
 HELPERS:= ../../util
 
@@ -7,8 +8,16 @@ all: ${BUILD}/mdatom params.inp
 	@${BUILD}/mdatom params.inp coords.inp
 	@jmol coords.traj
 
-${BUILD}/mdatom: ${BUILD}
-	@cd ${BUILD}; cmake ..; make;
+.PHONY: harmonic
+harmonic: ${BUILD}/mdatomHarmonic params.inp
+	${BUILD}/mdatomHarmonic params.inp coords.inp
+	@jmol coords.traj
+
+${BUILD}/mdatom: ${BUILD} ${wildcard ${LIB}/*} ${SOURCES}/main.cpp ${SOURCES}/CMakeLists.txt
+	@cd ${BUILD}; cmake ..; make mdatom;
+
+${BUILD}/mdatomHarmonic: ${BUILD} ${wildcard ${LIB}/*} ${SOURCES}/main.cpp ${SOURCES}/CMakeLists.txt
+	@cd ${BUILD}; cmake ..; make mdatomHarmonic;
 
 ${BUILD}:
 	@cd ${SOURCES}; mkdir build 2>/dev/null || true;
