@@ -7,6 +7,7 @@
 #include "TrajectoryFileWriter.h"
 #include "InteractionCalculator.h"
 #include <array>
+#include <cmath>
 
 /*!
  * This class is the core of a MD simulation.
@@ -52,6 +53,11 @@ class MDRun {
     int nhpr;
     int nlsq;
     double ekg;
+
+    // $\frac{\mu}{2 \Delta t^2}$ is a constant factor in this simulation
+    const double mu_d_2_tsq = par.atomicMass / (4 * std::pow(par.timeStep, 2));
+    const double Dt2_d_m = std::pow(par.timeStep, 2) / par.atomicMass;
+    const double shake_rel_tol = 1e-4;
 };
 
 #endif // MDRUN_H

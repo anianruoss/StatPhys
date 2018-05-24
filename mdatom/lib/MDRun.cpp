@@ -103,6 +103,9 @@ void MDRun::performStep(std::vector<double>& positions, std::vector<double>& vel
      */
     double oldKineticEnergy = 0.;
     double newKineticEnergy = 0.;
+
+    /* Store current positions for enforcing constraints */
+    std::vector<double> prev_pos = positions;
     for (int j3 = 0; j3 < nat3; j3++) {
         double oldVelocity = velocities[j3];
         double newVelocity = (oldVelocity + forces[j3] * dtm) * scal;
@@ -110,7 +113,70 @@ void MDRun::performStep(std::vector<double>& positions, std::vector<double>& vel
         newKineticEnergy += (oldVelocity + newVelocity) * (oldVelocity + newVelocity);
         velocities[j3] = newVelocity;
         positions[j3] += newVelocity * par.timeStep;
+	}
+
+#ifdef SHAKE
+	/* # Enforce constraints
+	 * _comments: Markdown with inline TeX_
+	 *
+	 * $f_c = \frac{\mu}{2 \Delta t^2} \frac{d^2 - d'^2}{d' \cdot d} \cdot d $
+	 * where 
+	 *
+	 * * $d$ is the constrained bond vector before integration
+	 * * $d'$ is the bond vector after integration step (not fully constrained)
+	 * * $\mu$ is the reduced mass ($\equiv \frac{m_a}{2}$ here)
+	 *
+	 * The loop body consists of:
+	 *
+	 * 1. Compute d, d' from prev_pos and positions
+	 * 2. Compute f from d, d'
+	 * 3. Compute $\Delta r_i$
+     *
+     * Note that we are actually iterating over constraints, not atoms
+	 */
+
+    bool constrained = false;
+
+    while (!constrained) {
+        std::vector<double> delta_pos(positions.size(), 0.);
+        constrained = true;
+
+        for (int atom = 0; atom < par.numberAtoms-1; ++atom) {
+            double d_start[3], d_end[3], f_c[3];
+            double ds, de, dotP;
+            ds = de = dotP = 0.;
+
+            for (int i = 0; i < 3; ++i) {
+                d_start[i] = prev_pos[(atom+1)*3 + i] - prev_pos[atom*3 + i];
+                d_end[i] = positions[(atom+1)*3 + i] - positions[atom*3 + i];
+
+                ds += d_start[i] * d_start[i];
+                de += d_end[i] * d_end[i];
+
+                dotP += d_start[i] * d_end[i];
+            }
+
+            ds = std::sqrt(ds);
+            de = std::sqrt(de);
+
+			double error = (std::abs(ds - de) / ds);
+            if (error >= shake_rel_tol)
+                constrained = false;
+
+            for (int i = 0; i < 3; ++i)
+                f_c[i] = d_start[i] * mu_d_2_tsq * (ds*ds - de*de) / dotP;
+
+            for (int i = 0; i < 3; ++i) {
+                delta_pos[atom*3 + i] -= Dt2_d_m * f_c[i];
+                delta_pos[(atom+1)*3 + i] += Dt2_d_m * f_c[i];
+            }
+        }
+
+        for (int j3 = 0; j3 < nat3; ++j3)
+            positions[j3] += delta_pos[j3];
     }
+#endif
+
     oldKineticEnergy *= (par.atomicMass / 2.);
     newKineticEnergy *= (par.atomicMass / 8.);
     properties[1] = newKineticEnergy;

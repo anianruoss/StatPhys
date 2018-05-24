@@ -49,7 +49,9 @@ set (sources
 )
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -march=native")
+set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0")
 
+# base
 add_library(mdatomLib ${sources} ${headers})
 set_target_properties(mdatomLib PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_include_directories(mdatomLib PUBLIC lib)
@@ -65,4 +67,13 @@ target_compile_definitions(mdatomLibHarmonic PUBLIC HARMONIC)
 
 add_executable(mdatomHarmonic main.cpp)
 target_link_libraries(mdatomHarmonic mdatomLibHarmonic)
+
+# shake
+add_library(mdatomLibShake ${sources} ${headers})
+set_target_properties(mdatomLibShake PROPERTIES POSITION_INDEPENDENT_CODE ON)
+target_include_directories(mdatomLibShake PUBLIC lib)
+target_compile_definitions(mdatomLibShake PUBLIC SHAKE)
+
+add_executable(mdatomShake main.cpp)
+target_link_libraries(mdatomShake mdatomLibShake)
 

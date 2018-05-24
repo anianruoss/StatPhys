@@ -90,12 +90,12 @@ void InteractionCalculator::calculatePotentialAndForceMagnitude(bool harmonic) {
 }
 #else
 void InteractionCalculator::calculatePotentialAndForceMagnitude() {
-        double riji2 = 1.0 / rij2; // inverse inter-particle distance squared
-        double riji6 = riji2 * riji2 * riji2; // inverse inter-particle distance (6th power)
-        double crh = c12 * riji6; // 4 epsilon sigma^12 / r^6
-        double crhh = crh - c6; // 4 epsilon (sigma^12 / r^6 - sigma^6) L-J potential work variable
-        eij = crhh * riji6; // 4 epsilon (sigma^12 / r^12 - sigma^6/r^6)
-        dij = 6. * (crh + crhh) * riji6 * riji2; // dij = force / rij
+    double riji2 = 1.0 / rij2; // inverse inter-particle distance squared
+    double riji6 = riji2 * riji2 * riji2; // inverse inter-particle distance (6th power)
+    double crh = c12 * riji6; // 4 epsilon sigma^12 / r^6
+    double crhh = crh - c6; // 4 epsilon (sigma^12 / r^6 - sigma^6) L-J potential work variable
+    eij = crhh * riji6; // 4 epsilon (sigma^12 / r^12 - sigma^6/r^6)
+    dij = 6. * (crh + crhh) * riji6 * riji2; // dij = force / rij
 }
 #endif
 
