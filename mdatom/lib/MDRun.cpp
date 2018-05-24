@@ -115,6 +115,7 @@ void MDRun::performStep(std::vector<double>& positions, std::vector<double>& vel
         positions[j3] += newVelocity * par.timeStep;
 	}
 
+#ifdef SHAKE
 	/* # Enforce constraints
 	 * _comments: Markdown with inline TeX_
 	 *
@@ -174,6 +175,7 @@ void MDRun::performStep(std::vector<double>& positions, std::vector<double>& vel
         for (int j3 = 0; j3 < nat3; ++j3)
             positions[j3] += delta_pos[j3];
     }
+#endif
 
     oldKineticEnergy *= (par.atomicMass / 2.);
     newKineticEnergy *= (par.atomicMass / 8.);
