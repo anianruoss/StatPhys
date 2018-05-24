@@ -51,7 +51,7 @@ class InteractionCalculator{
     double eij, dij;
 
     static constexpr double r0 = 1.;
-    static constexpr double K0 = 1.;
+    static constexpr double K0 = 100.;
     static constexpr double K0_half = K0 / 2.;
 };
 
