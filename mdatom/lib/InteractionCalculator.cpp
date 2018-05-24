@@ -91,8 +91,15 @@ void InteractionCalculator::calculateForceAndVirialContributions(int i, int j, s
         // Force increment in direction of inter-particle vector
         // (note: xij[m]/rij is unit vector in inter-particle direction.)
         double df = xij[m] * dij;
-        forces[i3 + m] += df;
-        forces[j3 + m] -= df;
+
+        if (j-i == 1) {
+            forces[i3 + m] -= df;
+            forces[j3 + m] += df;
+        } else {
+            forces[i3 + m] += df;
+            forces[j3 + m] -= df;
+        }
+
         virial -= xij[m] * df;
     }
 }
