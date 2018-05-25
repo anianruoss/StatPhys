@@ -1,0 +1,614 @@
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage[scaled]{helvet} % font family helvetica, important for good looking slides
+\usepackage{graphicx}
+\renewcommand*\familydefault{\sfdefault}
+\usepackage{hyperref}
+\usepackage{adjustbox}
+\usepackage{fancyvrb}
+
+\usepackage{bbm}
+\usepackage{tikz}
+\usetikzlibrary{calc,shapes,shadows,arrows,patterns,decorations.pathreplacing,matrix,fit,shapes.geometric,shapes.multipart,fit,chains,scopes,overlay-beamer-styles}
+\usepackage{pgfplots}
+\usepackage{listings}
+\usepackage{comment} % for being able to uncomment sections of the slides for different lectures
+%\usepackage{filecontents}
+
+\usepackage{etoolbox}
+\usepackage[vlined]{algorithm2e}
+
+\usepackage{booktabs}
+\usepackage{colortbl}
+% ---------------------------------------------------------
+% beamer setup: minimalistic and clean
+% ---------------------------------------------------------
+\usetheme[height=1.2cm]{Rochester}
+\usefonttheme{professionalfonts}
+\setbeamertemplate{blocks}[rounded][shadow=true]
+\setbeamertemplate{footline}{\hfill\insertframenumber\vskip1em} % without vskip it does not work -- the footline is too low for whatever reasons
+
+\makeatother
+\makeatletter\let\frametextheight\beamer@frametextheight\makeatother
+
+% ----- additional vertical spaces in itemize -----
+\setbeamertemplate{itemize/enumerate subbody begin}{\vspace{1ex}}
+\setbeamertemplate{itemize/enumerate subbody end}{\vspace{1ex}}
+
+% itemize with a bit more spaace between the items
+\newenvironment{itemizew}{\itemize\addtolength{\itemsep}{0.5ex}}{\enditemize}
+% itemize with left aligned itemize items
+\newenvironment{bullets}{%
+\settowidth{\leftmargini}{\usebeamertemplate{itemize item}}
+\addtolength{\leftmargini}{\labelsep}
+\addtolength{\itemsep}{0.5ex}
+\itemize[]}
+{\enditemize}
+
+
+% ----- special fonts for headlines etc. -----
+\newcommand{\foffont}{\usefont{OT1}{cmss}{bx}{n}} % alternative: bx (bold extended) -> sbc (semi bold condensed)
+\newcommand{\algfont}{\usefont{OT1}{cmss}{x}{n}} % alternative: bx (bold extended) -> sbc (semi bold condensed)
+\newcommand{\algcfont}{\usefont{OT1}{cmss}{x}{n}} % alternative: bx (bold extended) -> sbc (semi bold condensed)
+\newcommand{\foffontx}{\usefont{OT1}{phv}{bc}{n}}
+% normal font for code
+\newcommand{\srcfont}{\usefont{T1}{lmtt}{b}{n}}
+% narrow font for code
+\newcommand{\srcfontn}{\usefont{T1}{lmvtt}{b}{n}}
+% font for verbatim envirnoment. Note: must be fixed width!
+\fvset{fontfamily=lmtt, fontseries=b,formatcom=\color{fcb}}
+
+% ----- setting default fonts and colors -----
+\usecolortheme{dolphin}
+\definecolor{lightred}{rgb}{1,0.5,0.5}
+\setbeamerfont*{frametitle}{size=\Large,series=\foffontx}
+\setbeamerfont*{title}{series=\foffont, size=\LARGE}
+\setbeamerfont*{author}{series=\foffont, size=\small}
+\setbeamerfont*{institute}{series=\foffont, size=\normalsize}
+\setbeamerfont*{date}{series=\foffont, size=\small}
+\setbeamercolor*{institute}{fg=fcb}
+\setbeamercolor*{author}{fg=fcb}
+\setbeamercolor*{date}{fg=fcb}
+
+\only<beamer>{\setbeamercolor{normal text}{fg=black, bg=white!95!black}\setbeamercolor*{title}{fg=black, bg=white!95!black}}
+%\setbeamercolor{normal text}{fg=black, bg=white}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{frametitle}{\insertframetitle}
+\definecolor{lightblue}{RGB}{200,200,250}
+\setbeamercolor*{frametitle}{fg=black, bg=lightblue} % set bg to green (or so) when adjusting..
+\setbeamersize{text margin left = 0cm}
+\setbeamercolor*{subtitle}{fg=gray}
+\setbeamerfont*{subtitle}{series=\normalfont}
+\setbeamercolor*{footline}{fg=gray}
+\setbeamercolor{footnotemark}{fg=gray}
+\setbeamercolor{footnote}{fg=gray}
+\definecolor{lightgreen}{RGB}{173,255,47}
+\definecolor{lightorange}{RGB}{255,165,0}
+\definecolor{flatboxcolor}{named}{lightblue}
+\definecolor{boxcolor}{RGB}{200,200,200}
+\alt<beamer>{\definecolor{textbg}{RGB}{242,242,242}}{\definecolor{textbg}{RGB}{255,255,255}}
+\definecolor{textfg}{named}{black}
+\definecolor{textdimmed}{named}{lightgray}
+\definecolor{texthighlighted}{named}{red}
+\definecolor{texthighlightedx}{named}{blue}
+\definecolor{fig}{named}{blue}
+
+\newif\ifdark\darkfalse
+\only<0|handout:0|trans:0>{\darktrue}% dark background for slides, white background for transparencies and handouts.
+
+\ifcsname dark\endcsname \darktrue \fi
+\ifcsname light\endcsname \darkfalse \fi
+\ifdark
+\setbeamercolor{title}{bg=black, fg=lightblue}
+\setbeamercolor{frametitle}{bg=black!90!white, fg=lightblue}
+\setbeamercolor{normal text}{fg=white, bg=black}
+\setbeamercolor{background canvas}{bg=black}
+\setbeamercolor{block body alerted}{bg=normal text.bg!90!black}
+\setbeamercolor{block body}{bg=normal text.bg!90!normal text.fg}
+\setbeamercolor{block body example}{bg=normal text.bg!90!black}
+\setbeamercolor{block title alerted}{use={normal text,alerted text},fg=alerted text.fg!75!normal text.fg,bg=normal text.bg!75!black}
+\setbeamercolor{block title}{bg=blue!50!normal text.bg}
+\setbeamercolor{block title example}{use={normal text,example text},fg=example text.fg!75!normal text.fg,bg=normal text.bg!75!black}
+\definecolor{flatboxcolor}{RGB}{0,0,50}
+\definecolor{boxcolor}{RGB}{50,50,50}
+\definecolor{textbg}{named}{black}
+\definecolor{textfg}{named}{white}
+\definecolor{textdimmed}{named}{darkgray}
+\definecolor{dimmed}{named}{darkgray}
+\definecolor{texthighlighted}{named}{red}
+\definecolor{texthighlightedx}{named}{yellow}
+\definecolor{fig}{RGB}{255,255,50}
+\fi
+
+
+
+\definecolor{bca}{RGB}{250,200,200}
+\newcommand{\bca}{\color{bca}}
+\definecolor{fca}{RGB}{180,80,80}
+\newcommand{\fca}{\color{fca}}
+\definecolor{bcb}{RGB}{200,200,250}
+\newcommand{\bcb}{\color{bcb}}
+\definecolor{fcb}{RGB}{80,80,180}
+\newcommand{\fcb}{\color{fcb}}
+\definecolor{bcc}{RGB}{250,250,200}
+\newcommand{\bcc}{\color{bcc}}
+\definecolor{fcc}{RGB}{150,150,80}
+\newcommand{\fcc}{\color{fcc}}
+\definecolor{bcd}{RGB}{250,200,250}
+\newcommand{\bcd}{\color{bcd}}
+\definecolor{fcd}{RGB}{150,100,150}
+\newcommand{\fcd}{\color{fcd}}
+\definecolor{bce}{RGB}{200,250,200}
+\newcommand{\bce}{\color{bce}}
+\definecolor{fce}{RGB}{80,150,80}
+\newcommand{\fce}{\color{fce}}
+
+\definecolor{texthighlighted}{RGB}{170,40,40}
+\definecolor{texthighlightedx}{RGB}{40,40,170}
+\definecolor{fig}{named}{fca}
+\definecolor{hl}{named}{texthighlighted}
+\definecolor{hlx}{named}{texthighlightedx}
+\definecolor{hc}{named}{gray}
+\definecolor{hlc}{named}{hc}
+
+% shortcuts for text highlighting
+\newcommand{\hl}{\color{hl}}
+\newcommand{\hlx}{\color{hlx}}
+\newcommand{\hc}{\color{hc}} % comment color
+\newcommand{\dimm}{\color{gray}} % comment color
+\newcommand{\thl}[1]{\textcolor{texthighlighted}{#1}}
+\newcommand{\thlx}[2]{\textcolor{texthighlightedx}{#2}}
+\newcommand{\emx}{\em\color{texthighlighted}} % emphasize even more
+\newcommand{\hls}[1]{\text{\fcb\srcfont #1}}
+
+% some geometric changes
+\geometry{ paperwidth=\the\paperwidth, paperheight=\the\paperheight,
+%hmargin=0.8ex,vmargin=0cm,head=0.2cm, foot=2.5cm
+rmargin = 2ex,
+lmargin = 2ex,
+headsep=0.5ex
+}
+% adjust parskips in blocks
+%\addtobeamertemplate{block begin}{}{\setlength{\parskip}{0cm}}
+\setlength{\parskip}{0.5ex}
+
+%adjust vertical distance of text to header on each slide
+\setbeamertemplate{frametitle}
+{
+    \nointerlineskip
+    %\begin{beamercolorbox}[sep=0cm,ht=0em,wd=\paperwidth]{frametitle}
+       % \vbox{}\vskip-2ex%
+        \vspace{-1.6em} \strut\insertframetitle%\strut
+         %\vskip-0.8ex%
+    %\end{beamercolorbox}
+    \vspace{-0cm}
+}
+
+%----- adjust footnote location ---
+%\addtobeamertemplate{footnote}{}{\vspace{8em}}
+\let\oldfootnotesize\footnotesize
+\renewcommand*{\footnotesize}{\oldfootnotesize\scriptsize}
+
+% ------ little helpers --------
+%a section frame: displays current section name plus some subcaption as separate slide
+\newcommand{\sectionframe}[1]
+{{
+\setbeamercolor*{frametitle}{fg=normal text.fg, bg=normal text.bg} % set bg to green (or so) when adjusting..
+\begin{frame}[c]
+    \begin{center}
+    \usebeamerfont*{frametitle}
+    \usebeamercolor*[fg]{frametitle}
+    \center \LARGE \arabic{section}. \insertsection \\[1em]
+    \usebeamerfont*{subtitle}
+    \usebeamercolor*[fg]{subtitle}
+    \raggedright \normalsize
+    #1
+    \end{center}
+\end{frame}
+}}
+
+\newcommand{\subsectionframe}[1]
+{{
+\setbeamercolor*{frametitle}{fg=normal text.fg, bg=normal text.bg} % set bg to green (or so) when adjusting..
+\begin{frame}[c]
+    %\begin{center}
+    \usebeamerfont*{frametitle}
+    \usebeamercolor*[fg]{frametitle}
+    \Large \arabic{section}.\arabic{subsection} \insertsubsection \\[1em]
+    \usebeamerfont*{subtitle}
+    \usebeamercolor*[fg]{subtitle}
+    \raggedright \normalsize
+    \small #1
+    %\end{center}
+\end{frame}
+}}
+
+
+% ---------------------------------------------------------
+% boxes
+% ---------------------------------------------------------
+
+\newsavebox{\selvestebox}
+\newenvironment{colbox}[1]
+  {\newcommand\colboxcolor{#1}\begin{lrbox}{\selvestebox}\begin{minipage}[t]{\dimexpr\columnwidth-2\fboxsep\relax}{}
+  }
+  {\end{minipage}
+  \end{lrbox}%
+   %\begin{center}
+   \colorbox{\colboxcolor}{\usebox{\selvestebox}}
+   %\end{center}
+   }
+\newenvironment{colboxw}[2]
+  {\newcommand\colboxcolor{#1}\begin{lrbox}{\selvestebox}\begin{minipage}[t]{#2}{}
+  }
+  {\end{minipage}
+  \end{lrbox}%
+   %\begin{center}
+   \colorbox{\colboxcolor}{\usebox{\selvestebox}}
+   %\end{center}
+   }
+
+\definecolor{apricot}{RGB}{251, 206, 177}
+\newcommand{\beispiel}[1]{\usebeamercolor*{block body}\adjustbox{margin=0.5ex,bgcolor=bg}{\small\color{fg}#1}}
+%
+\renewcommand{\beispiel}[1]{
+\begin{minipage}{\linewidth}
+\begin{block}{\vspace{-3cm}}%no title bar
+#1
+\end{block}
+\end{minipage}}
+
+\newenvironment{beispiele}
+{\begin{minipage}{\linewidth} \begin{block}{\vspace{-3cm}}%no title bar
+}
+{\end{block}\end{minipage}
+}
+
+\newenvironment{variableblock}[3]{%
+  \setbeamercolor{block body}{#2}
+  \setbeamercolor{block title}{#3}
+  \begin{block}{#1}}{\end{block}}
+%\begin{variableblock}{Title}{bg=blue,fg=white}{bg=green,fg=red}
+%  Stuff
+%\end{variableblock}
+
+\renewenvironment{example}{\begin{block}{Beispiel}}{\end{block}}
+\newenvironment{observation}{\begin{block}{Beobachtung}}{\end{block}}
+
+\newcommand{\getnw}{\tikz[na] \node (nw)[coordinate] at ($(current page.north west)+(0.8cm, -1.5cm)$) {};}
+%\newcommand{\getorigin}{\tikz[na] \node[coordinate] (nw) {};}
+
+% placing pictures
+\newcommand{\myframeBR}[2]
+{
+\getnw
+\begin{tikzpicture}[overlay]
+\draw [above left] (nw) + (\textwidth, -\frameheight) node[inner sep=0mm]  {\begin{minipage}[b]{#1} #2 \end{minipage}};
+\end{tikzpicture}
+}
+\newcommand{\mypictureBR}[3]
+{
+\myframeBR{#1}{\includegraphics[width=\textwidth]{#2} \\ \tiny #3}
+}
+\newcommand{\myframeTR}[2]
+{
+\getnw
+\begin{tikzpicture}[overlay]
+\draw [below left] (nw) + (\textwidth, 0) node[inner sep=0mm]  {\begin{minipage}[b]{#1} #2 \end{minipage}};
+\end{tikzpicture}
+}
+\newcommand{\mypictureTR}[3]
+{
+\myframeTR{#1}{\includegraphics[width=\textwidth]{#2} \\ \tiny #3}
+}
+\newcommand{\myframeTL}[2]
+{
+\getnw
+\begin{tikzpicture}[overlay]
+\draw [below right] (nw)  node[inner sep=0mm]  {\begin{minipage}[b]{#1} #2 \end{minipage}};
+\end{tikzpicture}
+}
+\newcommand{\mypictureTL}[3]
+{
+\myframeTL{#1}{\includegraphics[width=\textwidth]{#2} \\ \tiny #3}
+}
+
+\newcommand{\myframeBL}[2]
+{
+\getnw
+\begin{tikzpicture}[overlay]
+\draw [above right] (nw) + (0, -\frameheight) node[inner sep=0mm]  {\begin{minipage}[b]{#1} #2 \end{minipage}};
+\end{tikzpicture}
+}
+\newcommand{\mypictureBL}[3]
+{
+\myframeBL{#1}{\includegraphics[width=\textwidth]{#2} \\ \tiny #3}
+}
+
+\tikzstyle{every picture}+=[remember picture]
+\tikzstyle{na} = [baseline=-.5ex]
+\newcommand{\frameheight}{\textheight}
+
+
+\newcommand{\quellen}[1]{
+\only<handout|trans>{
+\begin{tikzpicture}[overlay,remember picture]
+\draw [above left] (current page.south east) node[align=left]{\tiny\color{gray}\rotatebox{90}{\parbox[l]{20cm}{#1}}};
+\end{tikzpicture}
+}}
+\newcommand{\lbl}[1]{\tikz[na] \node[coordinate] (#1) {};}
+\newcommand{\lblb}[2]{\tikz[na]\node[inner sep=0pt](#1){\strut#2};}
+
+
+% ---------------------------------------------------------
+% listings
+% ---------------------------------------------------------
+\lstset{
+language=C++,
+basicstyle=\srcfont,
+keywordstyle=\fcb,
+commentstyle=\dimm,
+stringstyle=\fce,
+showstringspaces=false,
+columns=flexible
+%numbers=none, numberstyle=\tiny, stepnumber=1, numbersep=5pt, captionpos=b,
+%columns=flexible % flexible, fixed, fullflexible
+%framerule=1mm,frame=shadowbox, rulesepcolor=\color{blue}, % frame = shadowbox
+%xleftmargin=2mm,xrightmargin=2mm
+}
+% list styles
+% style: include @xxx@ and @@xxxx@@ for highlighting
+\lstdefinestyle{highlight}{
+moredelim=**[is][\hl]{@}{@},
+moredelim=**[is][\hlx]{@@}{@@},
+}
+% style: fixed width columns: when character-wise alignment is absolutely crucial
+\lstdefinestyle{fixed}{
+basicstyle=\srcfont\small,
+columns=fixed,
+style=highlight
+}
+% style: normal
+\lstdefinestyle{normal}{
+basicstyle=\srcfont\small,
+columns=flexible,
+style=highlight
+}
+% style: normal with normalsize
+\lstdefinestyle{normaln}{
+basicstyle=\srcfont\normalsize,
+columns=flexible,
+style=highlight
+}
+% style: narrow: when more space is required horizontally
+\lstdefinestyle{narrow}{
+basicstyle=\srcfontn\small,
+columns=flexible,
+style=highlight
+}
+%style: narrow with normalsize
+\lstdefinestyle{narrown}{
+basicstyle=\srcfontn\normalsize,
+columns=flexible,
+style=highlight
+}
+\alt<handout>
+{\lstdefinestyle{smallhandout}{basicstyle=\srcfont\footnotesize}}
+{\lstdefinestyle{smallhandout}{}}
+% overlay with highlighting
+\lstdefinestyle{overlay}{
+moredelim=**[is][\only<1|handout:0|trans:0>{\hl}]{@1@}{@1@},
+moredelim=**[is][\only<2|handout:0|trans:0>{\hl}]{@2@}{@2@},
+moredelim=**[is][\only<3|handout:0|trans:0>{\hl}]{@3@}{@3@},
+moredelim=**[is][\only<4|handout:0|trans:0>{\hl}]{@4@}{@4@},
+moredelim=**[is][\only<5|handout:0|trans:0>{\hl}]{@5@}{@5@},
+moredelim=**[is][\only<6|handout:0|trans:0>{\hl}]{@6@}{@6@},
+moredelim=**[is][\only<7|handout:0|trans:0>{\hl}]{@7@}{@7@},
+moredelim=**[is][\only<8|handout:0|trans:0>{\hl}]{@8@}{@8@},
+moredelim=**[is][\only<9|handout:0|trans:0>{\hl}]{@9@}{@9@},
+moredelim=**[is][\only<1|handout:0|trans:0>{\hlx}]{@@1@}{@@1@},
+moredelim=**[is][\only<2|handout:0|trans:0>{\hlx}]{@@2@}{@@2@},
+moredelim=**[is][\only<3|handout:0|trans:0>{\hlx}]{@@3@}{@@3@},
+moredelim=**[is][\only<4|handout:0|trans:0>{\hlx}]{@@4@}{@@4@},
+moredelim=**[is][\only<5|handout:0|trans:0>{\hlx}]{@@5@}{@@5@},
+moredelim=**[is][\only<6|handout:0|trans:0>{\hlx}]{@@6@}{@@6@},
+moredelim=**[is][\only<7|handout:0|trans:0>{\hlx}]{@@7@}{@@7@},
+moredelim=**[is][\only<8|handout:0|trans:0>{\hlx}]{@@8@}{@@8@},
+moredelim=**[is][\only<9|handout:0|trans:0>{\hlx}]{@@9@}{@@9@}
+}
+% style: dim after step 1
+\lstdefinestyle{dim}{
+basicstyle=\srcfont\small\only<1>{\color{textfg}}\only<2-|handout:0|trans:0>{\color{textdimmed}},
+commentstyle=\only<1>{\color{gray}}\only<2-|handout:0|trans:0>{\color{textdimmed}}
+}
+\lstdefinestyle{dimn}{
+basicstyle=\srcfont\normalsize\only<1>{\color{textfg}}\only<2-|handout:0|trans:0>{\color{textdimmed}},
+commentstyle=\only<1>{\color{gray}}\only<2-|handout:0|trans:0>{\color{textdimmed}}
+}
+\lstdefinestyle{dimmed}{
+style=normal,
+basicstyle=\srcfont\small\color{textdimmed}
+}
+\lstdefinestyle{cpp}{moredelim=**[is][\color{texthighlighted}]{@}{@},
+moredelim=**[is][\color{texthighlightedx}]{@@}{@@},
+basicstyle=\srcfont\normalsize}
+
+
+% ---------------------------------------------------------
+% algorithms
+% ---------------------------------------------------------
+
+\makeatletter
+\renewcommand{\SetKwInOut}[2]{%
+  \sbox\algocf@inoutbox{\KwSty{#2}\algocf@typo:}%
+  \expandafter\ifx\csname InOutSizeDefined\endcsname\relax% if first time used
+    \newcommand\InOutSizeDefined{}\setlength{\inoutsize}{\wd\algocf@inoutbox}%
+    \sbox\algocf@inoutbox{\parbox[t]{\inoutsize}{\KwSty{#2}\algocf@typo:\hfill}~}\setlength{\inoutindent}{\wd\algocf@inoutbox}%
+  \else% else keep the larger dimension
+    \ifdim\wd\algocf@inoutbox>\inoutsize%
+    \setlength{\inoutsize}{\wd\algocf@inoutbox}%
+    \sbox\algocf@inoutbox{\parbox[t]{\inoutsize}{\KwSty{#2}\algocf@typo:\hfill}~}\setlength{\inoutindent}{\wd\algocf@inoutbox}%
+    \fi%
+  \fi% the dimension of the box is now defined.
+  \algocf@newcommand{#1}[1]{%
+    \ifthenelse{\boolean{algocf@inoutnumbered}}{\relax}{\everypar={\relax}}%
+%     {\let\\\algocf@newinout\hangindent=\wd\algocf@inoutbox\hangafter=1\parbox[t]{\inoutsize}{\KwSty{#2}\algocf@typo\hfill:}~##1\par}%
+    {\let\\\algocf@newinout\hangindent=\inoutindent\hangafter=1\parbox[t]{\inoutsize}{\KwSty{#2}\algocf@typo:\hfill}~##1\par}%
+    \algocf@linesnumbered% reset the numbering of the lines
+  }}%
+\makeatother
+
+\SetKwInOut{KwInput}{Input}
+\SetKwInOut{KwOutput}{Output}
+\SetAlFnt{\algfont\small}
+\SetKwSty{foffont}
+\SetArgSty{algfont}
+\newcommand{\commentstyle}{\small\algcfont\color{gray}}
+\SetCommentSty{commentstyle}
+\newcommand{\vlinecolor}{gray}
+\SetKw{KwDownTo}{downto}
+\SetKw{KwAnd}{and}
+\SetKw{KwOr}{and}
+\DontPrintSemicolon
+\newcommand{\variable}[2]{\newcommand{#1}{\mathit{#2}}}
+\newcommand{\alignedcomment}[2][0.5]{\tcp*[f]{\makebox[#1\textwidth]{#2\hfill}}}
+
+
+\SetNlSty{commentstyle}{}{}
+% vertical rules in grey color
+\makeatletter
+% it is very strange: but this vlinecolor does not work. Tried a lot of different attempts. Leave it for the time being...
+\renewcommand{\algocf@Hlne}{{\color{\vlinecolor}\hrule height 0.4pt depth 0pt width .5em}}%
+
+%%%%%%%%% block with a vertical line end by a little horizontal line
+\renewcommand{\algocf@Vline}[1]{%     no vskip in between boxes but a strut to separate them,
+  \strut\par\nointerlineskip% then interblock space stay the same whatever is inside it
+  \algocf@push{\skiprule}%        move to the right before the vertical rule
+  \hbox{{\color{\vlinecolor}\vrule}%
+    \vtop{\algocf@push{\skiptext}%move the right after the rule
+      \vtop{\algocf@addskiptotal #1}{\algocf@Hlne}}}\vskip\skiphlne% inside the block
+  \algocf@pop{\skiprule}%\algocf@subskiptotal% restore indentation
+  \nointerlineskip}% no vskip after
+%
+%%%%%%%%% block with a vertical line
+\renewcommand{\algocf@Vsline}[1]{%    no vskip in between boxes but a strut to separate them,
+  \strut\par\nointerlineskip% then interblock space stay the same whatever is inside it
+  \algocf@bblockcode%
+  \algocf@push{\skiprule}%        move to the right before the vertical rule
+  \hbox{{\color{\vlinecolor} \vrule}%               the vertical rule
+    \vtop{\algocf@push{\skiptext}%move the right after the rule
+      \vtop{\algocf@addskiptotal #1}}}% inside the block
+  \algocf@pop{\skiprule}% restore indentation
+  \algocf@eblockcode%
+}
+%
+%
+%
+\makeatother
+%
+%
+% ---------------------------------------
+%  tables
+% ---------------------------------------
+
+\colorlet{tableheadcolor}{bcb!75} % Table header colour = 25% gray
+\newcommand{\headcol}{\rowcolor{tableheadcolor}} %
+\colorlet{tablerowcolor}{bcb!50} % Table row separator colour = 10% gray
+\newcommand{\rowcol}{\rowcolor{tablerowcolor}} %
+\newcommand{\topline}{\arrayrulecolor{fcb}\specialrule{0.1em}{\abovetopsep}{0pt}%
+            \arrayrulecolor{tableheadcolor}\specialrule{\belowrulesep}{0pt}{0pt}%
+            \arrayrulecolor{fcb}}
+\newcommand{\midline}{\arrayrulecolor{tableheadcolor}\specialrule{\aboverulesep}{0pt}{0pt}%
+            \arrayrulecolor{fcb}\specialrule{\lightrulewidth}{0pt}{0pt}%
+            \arrayrulecolor{fcb}}
+\newcommand{\bottomline}{\arrayrulecolor{bg}\specialrule{\aboverulesep}{0pt}{0pt}%
+            \arrayrulecolor{fcb}\specialrule{\heavyrulewidth}{0pt}{\belowbottomsep}}%
+
+% ---------------------------------------------------------
+% miscellaneous
+% ---------------------------------------------------------
+
+% a vertical separator
+\newcommand{\vsep}{\vspace{1em}}
+
+% really often used mathematical symbols
+\newcommand{\R}{\mathbbm{R}}
+\newcommand{\N}{\mathbbm{N}}
+\newcommand{\Z}{\mathbbm{Z}}
+\newcommand{\C}{\mathbbm{C}}
+\newcommand{\Q}{\mathbbm{Q}}
+\newcommand{\I}{\mathbbm{1}}
+\newcommand{\prob}{\mathbbm{P}}
+\newcommand{\vP}{\mathbbm{P}}
+\newcommand{\expect}{\mathbbm{E}}
+\newcommand{\vE}{\mathbbm{E}}
+\newcommand{\calK}{\ensuremath{\mathcal{K}}}
+\newcommand{\calH}{\ensuremath{\mathcal{H}}}
+% really often used language names
+\newcommand{\cpp}{\textrm{C{+}{+}}}
+\newcommand{\plainc}{\textrm{C}}
+
+\newcommand{\AND}{\mathop{\mathrm{AND}}}
+\newcommand{\OR}{\mathrm{OR}}
+\newcommand{\NOT}{\mathrm{NOT}}
+\newcommand{\XOR}{\mathrm{XOR}}
+\newcommand{\ratpack}{RAT PACK$^\circledR$}
+
+% a smiley
+\newcommand{\happy}{\tikz[baseline=-0.75ex,black,very thick,fill=bce,draw=fce,scale=1.2]{
+    \draw[fill,draw] circle (2mm);
+\node[fill=fce,circle,inner sep=0.5pt] (left eye) at (135:0.8mm) {};
+\node[fill=fce,circle,inner sep=0.5pt] (right eye) at (45:0.8mm) {};
+\draw (-145:0.9mm) arc (-140:-40:1mm);
+    }}
+\newcommand{\sad}{\tikz[baseline=-0.75ex,black,very thick,fill=bca,draw=fca,scale=1.2]{
+    \draw[fill,draw] circle (2mm);
+\node[fill=fca,circle,inner sep=0.5pt] (left eye) at (135:0.8mm) {};
+\node[fill=fca,circle,inner sep=0.5pt] (right eye) at (45:0.8mm) {};
+\draw (-35:1.2mm) arc (40:140:1.2mm);
+    }}
+\newcommand{\boring}{\tikz[baseline=-0.75ex,black,very thick,fill=bcc,draw=fcc,scale=1.2]{
+    \draw[fill,draw] circle (2mm);
+\node[fill=fcc,circle,inner sep=1pt] (left eye) at (135:0.8mm) {};
+\node[fill=fcc,circle,inner sep=1pt] (right eye) at (45:0.8mm) {};
+\node[fill=bcc,inner sep=1.2pt,above] at (left eye) {};
+\node[fill=bcc,inner sep=1.2pt,above] at (right eye) {};
+\node[draw=fcc,circle,inner sep=0.5mm] (mouth) at (-70:1.1mm) {};
+    }}
+
+
+
+\newcommand{\todo}[1]{\tikz[overlay]{\getnw;\node[draw,rectangle,fill=red,right] at (nw){\color{white}! #1 !};}}
+\newcommand{\bigO}{\ensuremath{\mathcal{O}}}
+\renewenvironment{proof}{Beweis: }{\hfill $\blacksquare$}
+\newcommand{\floor}[1]{\ensuremath{\left\lfloor#1\right\rfloor}}
+\newcommand{\ceil}[1]{\ensuremath{\left\lceil#1\right\rceil}}
+\newenvironment{question}[1]
+{\begin{variableblock}{
+\tikz[]{\node[circle,draw, inner sep= 1pt,ultra thick] at (0,0.2) {\bf ?};} #1}{bg=textbg,fg=textfg}{bg=flatboxcolor,fg=textfg}
+}
+{\end{variableblock}}
+\newcommand{\answer}{\tikz[]{\node[circle,draw, inner sep= 1pt,ultra thick] at (0,0.2) {\bf !};}}
+\newcommand{\questionM}{\tikz[]{\node[circle,draw, inner sep= 1pt,ultra thick] at (0,0.2) {\bf ?};}}
+%  Stuff
+%\end{variableblock}
+
+\newcommand{\Widmayer}[1]{Ottman/Widmayer, Kap.\ #1}
+\newcommand{\Cormen}[1]{Cormen et al, Kap.\ #1}
+\newcommand{\Stroustrup}[1]{Stroustrup, Kap.\ #1}
+\newcommand{\Herlihy}[1]{Herlihy/Shavit, Kap.\ #1}
+
+\graphicspath{{./img/}{./}}
+\newcommand{\mypicture}[2][1.0]{
+    \includegraphics[width=#1\textwidth, height=#1\textheight, keepaspectratio]{#2}
+}
+
+\ifdefined\englishSlides
+\newcommand\trans[2]{#2}
+\else
+\newcommand\trans[2]{#1}
+\fi
+%\newcommand{\trans}[2]{\ifdefined\englishSlides #2\else #1 \fi}
+
