@@ -54,8 +54,11 @@ class InteractionCalculator{
     double rij2; // Inter-particle distance squared
     double eij, dij;
 
-    static constexpr double r0 = 1.;
-    static constexpr double K0 = 100.;
+	// r0 for C-C bond: 120pm
+	// K0 = 1.05E6 = 1750 N/m, 1450cm^-1 for octane methyl-C's as detailed in
+	// http://people.stfx.ca/dklapste/Chem325/c325notes/c325_vibr_functional_groups_notes.pdf
+    static constexpr double r0 = 0.12;
+    static constexpr double K0 = 1.05e6;
     static constexpr double K0_half = K0 / 2.;
 };
 

@@ -120,7 +120,7 @@ void TrajectoryFileWriter::writeOutTrajectoryStepInAsciiForm(const std::vector<d
 	// This function writes PDB Files as defined here:
 	// It writes the minimum amount of information necessary
 	
-    const string atom = "AR";
+    const string atom = "C";
     ofstream fileFW;
     fileFW.open(trajectoryCoordinatesFilename, ios::out | ios::app);
     if (fileFW.bad()) {
@@ -137,9 +137,9 @@ void TrajectoryFileWriter::writeOutTrajectoryStepInAsciiForm(const std::vector<d
 		fileFW << setw(6) << 1 << setw(4) << " ";
         for (int c = 0; c < 3; c++){
 			// angström used
-			// fileFW << setw(8) << 10 * positions[i*3+c];
+			fileFW << setw(8) << 10 * positions[i*3+c];
 			// perhaps not
-			fileFW << setw(8) << positions[i*3+c];
+			// fileFW << setw(8) << positions[i*3+c];
         }
 		fileFW << setw(6) << "  1.00" << setw(6) << "  0.00" << setw(10) << ' ';
 		fileFW << right << setw(2) << atom << "  " << endl;

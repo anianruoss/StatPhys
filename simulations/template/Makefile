@@ -11,12 +11,12 @@ base: ${BUILD}/mdatomBase params.inp
 
 .PHONY: harmonic
 harmonic: ${BUILD}/mdatomHarmonic params.inp
-	${BUILD}/mdatomHarmonic params.inp coords.inp
+	${BUILD}/mdatomHarmonic params.inp coords.inp > out.dat
 	@jmol coords.traj
 
 .PHONY: shake
 shake: ${BUILD}/mdatomShake params.inp
-	${BUILD}/mdatomShake params.inp coords.inp
+	${BUILD}/mdatomShake params.inp coords.inp > out.dat
 	@jmol coords.traj
 
 
