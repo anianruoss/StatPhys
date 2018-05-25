@@ -5,8 +5,8 @@ HELPERS:= ../../util
 
 
 .PHONY: base
-base: ${BUILD}/mdatom params.inp
-	@${BUILD}/mdatom params.inp coords.inp > out.dat
+base: ${BUILD}/mdatomBase params.inp
+	@${BUILD}/mdatomBase params.inp coords.inp
 	@jmol coords.traj
 
 .PHONY: harmonic
@@ -20,8 +20,8 @@ shake: ${BUILD}/mdatomShake params.inp
 	@jmol coords.traj
 
 
-${BUILD}/mdatom: ${BUILD} ${wildcard ${LIB}/*} ${SOURCES}/main.cpp ${SOURCES}/CMakeLists.txt
-	@cd ${BUILD}; cmake ..; make mdatom;
+${BUILD}/mdatomBase: ${BUILD} ${wildcard ${LIB}/*} ${SOURCES}/main.cpp ${SOURCES}/CMakeLists.txt
+	@cd ${BUILD}; cmake ..; make mdatomBase;
 
 ${BUILD}/mdatomHarmonic: ${BUILD} ${wildcard ${LIB}/*} ${SOURCES}/main.cpp ${SOURCES}/CMakeLists.txt
 	@cd ${BUILD}; cmake ..; make mdatomHarmonic;
