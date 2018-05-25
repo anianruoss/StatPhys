@@ -18,5 +18,5 @@ ${BUILD}:
 
 .PHONY: clean
 clean:
-	@rm -r data *.pdf 2>/dev/null || true
+	@rm -r data *.png 2>/dev/null || true
 	@rm -r ${BUILD} 2>/dev/null || true
