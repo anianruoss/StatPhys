@@ -41,4 +41,5 @@ params.inp: mdpar.ini
 .PHONY: clean
 clean:
 	@rm *.final *.traj params.inp 2>/dev/null || true
+	@rm -r ${BUILD} 2>/dev/null || true
 

@@ -3,8 +3,9 @@ LIB := ${SOURCES}/lib
 BUILD:= ${SOURCES}/build
 HELPERS:= ../../util
 
-.PHONY: all
-all: ${BUILD}/mdatom params.inp
+
+.PHONY: base
+base: ${BUILD}/mdatom params.inp
 	@${BUILD}/mdatom params.inp coords.inp
 	@jmol coords.traj
 
@@ -40,4 +41,5 @@ params.inp: mdpar.ini
 .PHONY: clean
 clean:
 	@rm *.final *.traj params.inp 2>/dev/null || true
+	@rm -r ${BUILD} 2>/dev/null || true
 
