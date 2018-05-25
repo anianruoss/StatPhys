@@ -1,4 +1,5 @@
 from os import listdir, path
+import configparser
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -9,6 +10,10 @@ data_files = listdir('data')
 temperature_files = [
     file for file in data_files if file.startswith('coords') and '_t' in file
 ]
+
+c = configparser.ConfigParser()
+c.read('mdpar.ini')
+num_atom = int(c['md']['NumberAtoms'])
 
 temperature_data = {'Base': {}, 'Harmonic': {}, 'Shake': {}}
 
@@ -24,7 +29,7 @@ for temperature_file in natsorted(temperature_files):
                 break
 
             start_atom = file.readline()
-            for i in range(6):
+            for i in range(num_atom - 2):
                 file.readline()
             end_atom = file.readline()
             file.readline()
