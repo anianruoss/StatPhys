@@ -32,9 +32,26 @@ void TrajectoryFileWriter::writeBeforeRun() {
         if (fout1.bad()) {
             throw std::runtime_error("can't open " + trajectoryCoordinatesFilename);
         }
+
         return;
         fout1 << par.title << endl;
     }
+}
+
+void TrajectoryFileWriter::writeAfterRun() {
+    ofstream fileFW;
+    fileFW.open(trajectoryCoordinatesFilename, ios::out | ios::app);
+    if (fileFW.bad()) {
+        throw runtime_error("I/O ERROR: cannot write to file: " + trajectoryCoordinatesFilename);
+    }
+	// Bonds
+	int N = par.numberAtoms;
+	for (int step = 0; step < model; step++){
+		for (int atom = 1; atom < N; atom++){
+			fileFW << "CONECT" << setw(5) << step*N + atom << setw(5) << step*N + atom + 1 << endl;
+			fileFW << "CONECT" << setw(5) << step*N + atom + 1 << setw(5) << step*N + atom << endl;
+		}
+	}
 }
 
 void TrajectoryFileWriter::writeFinalCoordinates(const std::vector<double>& positions,
@@ -100,18 +117,33 @@ void TrajectoryFileWriter::writeOutTrajectoryStepInBinaryForm(const std::vector<
 }
 
 void TrajectoryFileWriter::writeOutTrajectoryStepInAsciiForm(const std::vector<double>& positions) {
-    const string atom = "Ar";
+	// This function writes PDB Files as defined here:
+	// It writes the minimum amount of information necessary
+	
+    const string atom = "AR";
     ofstream fileFW;
     fileFW.open(trajectoryCoordinatesFilename, ios::out | ios::app);
     if (fileFW.bad()) {
         throw runtime_error("I/O ERROR: cannot write to file: " + trajectoryCoordinatesFilename);
     }
-    fileFW << par.numberAtoms << endl << par.title << std::endl;
+	// Header block
+	// Bonds are between subsequent atoms
+	// Counts line
+	int N = par.numberAtoms;
+	fileFW << "MODEL" << setw(5) << ' ' << model+1 << endl;
     for (int i = 0; i < par.numberAtoms; i++){
-        fileFW << atom << '\t';
+		fileFW << fixed << setprecision(3);
+		fileFW << "HETATM" << setw(5) << model * N + i + 1<< " " << setw(4) << i + 1<< " UNK";
+		fileFW << setw(6) << 1 << setw(4) << " ";
         for (int c = 0; c < 3; c++){
-            fileFW << positions[i*3+c] << '\t';
+			// angström used
+			// fileFW << setw(8) << 10 * positions[i*3+c];
+			// perhaps not
+			fileFW << setw(8) << positions[i*3+c];
         }
-        fileFW << endl;
+		fileFW << setw(6) << "  1.00" << setw(6) << "  0.00" << setw(10) << ' ';
+		fileFW << right << setw(2) << atom << "  " << endl;
     }
+	fileFW << "ENDMDL" << endl;
+	model ++;
 }

@@ -52,6 +52,8 @@ void MDSimulation::executeMDIterations() {
     mdRun.run(positions, velocities);
     timer.mdEnd();
 
+    trajectoryWriter.writeAfterRun();
+
     printRadialDistribution(mdRun.getRadialDistribution());
     trajectoryWriter.writeFinalCoordinates(positions, velocities);
 }
