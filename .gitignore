@@ -37,6 +37,9 @@ build
 # IPython Checkpoints
 .ipynb_checkpoints
 
+# JetBrains Files
+.idea
+
 # Virtualenv
 virtualenv
 
