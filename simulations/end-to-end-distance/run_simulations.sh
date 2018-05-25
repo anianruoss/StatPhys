@@ -6,7 +6,7 @@ UTIL=../../util
 
 source ../../virtualenv/bin/activate
 
-DIR=calculations_dir
+DIR=data
 rm -rf $DIR
 mkdir $DIR
 cd $DIR
