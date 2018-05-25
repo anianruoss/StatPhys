@@ -52,12 +52,12 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -march=native")
 set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0")
 
 # base
-add_library(mdatomLib ${sources} ${headers})
-set_target_properties(mdatomLib PROPERTIES POSITION_INDEPENDENT_CODE ON)
-target_include_directories(mdatomLib PUBLIC lib)
+add_library(mdatomLibBase ${sources} ${headers})
+set_target_properties(mdatomLibBase PROPERTIES POSITION_INDEPENDENT_CODE ON)
+target_include_directories(mdatomLibBase PUBLIC lib)
 
-add_executable(mdatom main.cpp)
-target_link_libraries(mdatom mdatomLib)
+add_executable(mdatomBase main.cpp)
+target_link_libraries(mdatomBase mdatomLibBase)
 
 # harmonic
 add_library(mdatomLibHarmonic ${sources} ${headers})
