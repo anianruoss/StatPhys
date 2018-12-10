@@ -1687,132 +1687,12 @@
 }{%
   \end{algocf@algorithm}\ignorespacesafterend%
 }%
-%%% user algorithm* environment
-\newenvironment{\algocf@envname*}[1][htbp]{%
-  \setboolean{algocf@algostar}{true}%
-  \setboolean{algocf@procenvironment}{false}\gdef\algocfautorefname{\algorithmautorefname}%
-  \begin{algocf@algorithm}[#1]\ignorespaces%
-}{%
-  \end{algocf@algorithm}\ignorespacesafterend%
-}%
-%
-%%%%%%%%%%%%%%%%%%%%%%%
-%%%
 %
 \expandafter\newcommand\csname\algocf@listofalgorithms\endcsname{%
   \ifthenelse{\equal{\algocf@float}{figure}}{\listoffigures}{\listofalgocfs}%
 }%
 %%%
 %%%
-%
-% ----------------------  procedure and function environments
-%
-%
-% -- new style (used in particular in the caption of function and procedure environments)
-%
-% three macros to extract parts of the caption
-\gdef\algocf@captname#1(#2)#3@{#1}  % keep characters before the first brace
-\gdef\algocf@captparam#1(#2)#3@{#2} % keep character in between the braces
-\gdef\algocf@captother#1(#2)#3@{#3} % keep character after the braces
-%
-%%% Text of caption for Procedure or Function
-\newcommand{\algocf@captionproctext}[2]{%
-  {%
-    \ProcSty{\ProcFnt\algocf@procname\ifthenelse{\boolean{algocf@procnumbered}}{\nobreakspace\thealgocf\algocf@typo\algocf@capseparator}{\relax}}%
-    \nobreakspace\ProcNameSty{\ProcNameFnt\algocf@captname #2@}% Name of the procedure in ProcName Style. 
-    \ifthenelse{\equal{\algocf@captparam #2@}{\arg@e}}{}{% if no argument, write nothing
-      \ProcNameSty{\ProcNameFnt(}\ProcArgSty{\ProcArgFnt\algocf@captparam #2@}\ProcNameSty{\ProcNameFnt)}%else put arguments in ProcArgSty:
-    }% endif
-    \algocf@captother #2@%
-  }%
-}%
-%
-%
-% -- procedure and function environments are defined from algocf@algorithm environment
-%
-\newenvironment{procedure}[1][htbp]{%
-  \setboolean{algocf@algostar}{false}%
-  \setboolean{algocf@procenvironment}{true}\setboolean{algocf@func}{false}%
-  \newcommand{\algocf@procname}{\@algocf@procname}\gdef\algocfprocautorefname{\procedureautorefname}%
-  \begin{algocf@algorithm}[#1]\ignorespaces%
-}{%
-  \end{algocf@algorithm}\ignorespacesafterend%
-}%
-\newenvironment{function}[1][htbp]{%
-  \setboolean{algocf@algostar}{false}%
-  \setboolean{algocf@procenvironment}{true}\setboolean{algocf@func}{true}%
-  \newcommand{\algocf@procname}{\@algocf@funcname}\gdef\algocffuncautorefname{\functionautorefname}%
-  \begin{algocf@algorithm}[#1]\ignorespaces%
-}{%
-  \end{algocf@algorithm}\ignorespacesafterend%
-}%
-%
-\newenvironment{procedure*}[1][htbp]{%
-  \setboolean{algocf@algostar}{true}%
-  \setboolean{algocf@procenvironment}{true}\setboolean{algocf@func}{false}%
-  \newcommand{\algocf@procname}{\@algocf@procname}\gdef\algocfprocautorefname{\procedureautorefname}%
-  \begin{algocf@algorithm}[#1]\ignorespaces%
-}{%
-  \end{algocf@algorithm}\ignorespacesafterend%
-}%
-\newenvironment{function*}[1][htbp]{%
-  \setboolean{algocf@algostar}{true}%
-  \setboolean{algocf@procenvironment}{true}\setboolean{algocf@func}{true}%
-  \newcommand{\algocf@procname}{\@algocf@funcname}\gdef\algocffuncautorefname{\functionautorefname}%
-  \begin{algocf@algorithm}[#1]\ignorespaces%
-}{%
-  \end{algocf@algorithm}\ignorespacesafterend%
-}%
-%
-%
-%%%%%%%%%%%%%%%%%%%%
-%% definition of algondfloat environment
-%%
-\ifthenelse{\boolean{algocf@endfloat}}{% if endfloat option then
-\newcommand{\algoplace}{% macro which is used to writhe algorithm about there
-   \begin{center}%
-     [\algorithmcfname~\thepostfig\ about here.]%
-   \end{center}%
-}%
-\newcommand{\algoendfloat}{% use as a \begin{algoendfloat} environment to start scanning of line
-%  \immediate\openout\@mainfff\jobname.fff%
-  \efloat@condopen{fff}
-  \efloat@iwrite{fff}{\string\begin{\algocf@envname}}%
-    \if@domarkers%
-       \ifthenelse{\equal{\algocf@list}{lof}}{%
-         \addtocounter{postfig}{1}%
-       }{%
-         \addtocounter{postalgo}{1}%
-       }%
-       \algoplace%
-    \fi%
-    \bgroup%
-    \let\do\ef@makeinnocent\dospecials%
-    \ef@makeinnocent\^^L% and whatever other special cases
-    \endlinechar`\^^M \catcode`\^^M=12 \ef@xalgocfendfloat}%
-}{\relax}%%%% end of endfloat option ifthenelse
-%% some macros useful for endfloat option that cannot be defined inside the ifthenelse
-%scan algoendfloat algorithm and write the text into .fff file
-{\catcode`\^^M=12 \endlinechar=-1 %
- \gdef\ef@xalgocfendfloat#1^^M{% scan the lines inside algoendfloat environment being read by latex
-   \def\test{#1}% test is the line being currently scan by latex
-   \ifx\test\ef@endalgocftest% if it is \end{algoendfloat}
-     \def\next{% define next as to not continue the scan and write \end{algorithm} into .fff file
-       \egroup\end{algoendfloat}%
-       \efloat@iwrite{fff}{\string\end{\algocf@envname}}%
-       \efloat@iwrite{fff}{\string\efloatseparator}%
-       \efloat@iwrite{fff}{ }%
-     }%
-     \else% else write the current line being scanned by latex and set next to continue the scan
-       \efloat@iwrite{fff}{#1}%
-       \let\next\ef@xalgocfendfloat%
-     \fi% endif
-     \next}% next is continue if it was else condition, else it does not continue the scan and write end to file
-}%
-% test if the scan is finish by looking at the string \end{algoendfloat}
-{\escapechar=-1%
- \xdef\ef@endalgocftest{\string\\end\string\{algoendfloat\string\}}%
-}%
 %
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1840,11 +1720,6 @@
 % -------------------------   Default Definitions
 \SetKwComment{tcc}{/* }{ */}%
 \SetKwComment{tcp}{// }{}%
-%
-%\newcommand{\algocf@defaults@common}{
-%
-%
-% english keywords (default)
 %
 \SetKwHangingKw{KwHData}{Data$\rightarrow$}
 \SetKwInput{KwIn}{Input}%
